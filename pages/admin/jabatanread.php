@@ -44,7 +44,7 @@
       <div class="card">
           <div class="card-header">
               <h3 class="card-title">Data Jabatan</h3>
-              <a href="?page=lokasicreate"
+              <a href="?page=jabatancreate"
                   class="btn btn-success btn-sm float-right">
                   <i class="fa fa-plus-circle"></i> Tambah Data</a>
           </div>
@@ -92,11 +92,11 @@
                   <td>
                       <form action method=" POST">
                       <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
-                    <a href="?page=lokasiupdate&id=<?php echo $row['id'] ?>"
+                    <a href="?page=jabatanupdate&id=<?php echo $row['id'] ?>"
                       class="btn btn-primary btn-sm mr-1">
                         <i class="fa fa-edit"></i> Ubah
                     </a>
-                    <a href="?page=lokasidelete&id=<?php echo $row['id'] ?>"
+                    <a href="?page=jabatandelete&id=<?php echo $row['id'] ?>"
                       class="btn btn-danger btn-sm"
                   onClick="javascript: return confirm('Konfirmasi data akan dihapus?');">
                           <i class="fa fa-trash"></i> Hapus
