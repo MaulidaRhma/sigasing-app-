@@ -27,14 +27,14 @@
           ?>
           <div class="row mb-2">
               <div class="col-sm-6">
-                  <h1 class="m-0">Bagian</h1>
+                  <h1 class="m-0">Karyawan</h1>
               </div><!-- /.col -->
               <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
                       <li class="breadcrumb-item">
                           <a href="?page=home"> Home</a>
                       </li>
-                      <li class="breadcrumb-item">Bagian</li>
+                      <li class="breadcrumb-item">Karyawan</li>
                   </ol>
               </div><!-- /.col -->
           </div><!-- /.row -->
@@ -43,8 +43,8 @@
   <div class="content">
       <div class="card">
           <div class="card-header">
-              <h3 class="card-title">Data Bagian</h3>
-              <a href="?page=bagiancreate"
+              <h3 class="card-title">Data Karyawan</h3>
+              <a href="?page=karyawancreate"
                   class="btn btn-success btn-sm float-right">
                   <i class="fa fa-plus-circle"></i> Tambah Data</a>
           </div>
@@ -52,19 +52,19 @@
             <table id="mytable" class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>No</th>
-                  <th>Nama Bagian</th>
-                  <th>Kepala Bagian</th>
-                  <th>Lokasi</th>
+                  <th>Nik</th>
+                  <th>Nama Karyawan</th>
+                  <th>Bagian</th>
+                  <th>Jabatan</th>
                   <th>Opsi</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                  <th>No</th>
-                  <th>Nama Bagian</th>
-                  <th>Kepala Bagian</th>
-                  <th>Lokasi</th>
+                  <th>Nik</th>
+                  <th>Nama Karyawan</th>
+                  <th>Bagian</th>
+                  <th>Jabatan</th>
                   <th>Opsi</th>
                 </tr>
               </tfoot>
@@ -73,7 +73,20 @@
               $database = new Database();
               $db = $database->getConnection();
 
-              $selectSql = "SELECT B.*, K.nama_lengkap nama_kepala_bagian, L.nama_lokasi nama_lokasi_bagian FROM bagian B LEFT JOIN karyawan K ON B.karyawan_id = K.id LEFT JOIN lokasi L ON B.lokasi_id = L.id";
+              $selectSql = "SELECT K.*,
+                              (
+                              SELECT J.nama_jabatan FROM jabatan_karyawan JK
+                              INNER JOIN jabatan J ON JK.jabatan_id = J.id
+                              WHERE JK.karyawan_id = K.id ORDER BY JK.tanggal_mulai DESC
+                              LIMIT 1
+                              ) jabatan_terkini,
+                              (
+                              SELECT B.nama_bagian FROM bagian_karyawan BK
+                              INNER JOIN bagian B ON BK.bagian_id = B.id
+                              WHERE BK.karyawan_id = K.id ORDER BY BK.tanggal_mulai DESC
+                              LIMIT 1
+                              ) bagian_terkini
+                              FROM karyawan K";
 
               $stmt = $db->prepare($selectSql);
               $stmt->execute();
@@ -82,18 +95,16 @@
               while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
               ?>
               <tr>
-                  <td><?php echo $no++ ?></td>
-                  <td><?php echo $row['nama_bagian'] ?></td>
-                  <td><?php echo $row['nama_kepala_bagian'] ?></td>
-                  <td><?php echo $row['nama_lokasi_bagian'] ?></td>
+                  <td><?php echo $row['nik'] ?></td>
+                  <td><?php echo $row['nama_lengkap'] ?></td>
+                  <td><?php echo $row['bagian_terkini'] ?></td>
+                  <td><?php echo $row['jabatan_terkini'] ?></td>
                   <td>
-                      <form action method=" POST">
-                      <input type="hidden" name="id" value="<?php echo $row['id'] ?>">
-                    <a href="?page=bagianupdate&id=<?php echo $row['id'] ?>"
+                    <a href="?page=karyawanupdate&id=<?php echo $row['id'] ?>"
                       class="btn btn-primary btn-sm mr-1">
                         <i class="fa fa-edit"></i> Ubah
                     </a>
-                    <a href="?page=bagiandelete&id=<?php echo $row['id'] ?>"
+                    <a href="?page=karyawandelete&id=<?php echo $row['id'] ?>"
                       class="btn btn-danger btn-sm"
                   onClick="javascript: return confirm('Konfirmasi data akan dihapus?');">
                           <i class="fa fa-trash"></i> Hapus
